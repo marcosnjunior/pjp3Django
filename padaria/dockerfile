@@ -1,0 +1,30 @@
+FROM python:3.12-slim
+
+RUN apt-get update && apt-get install -y python3-distutils
+
+# Cria o diretório de trabalho para os arquivos estáticos
+RUN mkdir /staticfiles
+RUN mkdir /mediafiles
+
+
+# Define o diretório de trabalho
+#WORKDIR $APP_HOME
+
+
+# set work directory
+WORKDIR /code
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install dependencies
+RUN pip install --upgrade pip
+COPY ./req.txt .
+RUN pip install -r req.txt
+
+# copy project
+COPY . .
+
+# Faz a coleta de arquivos estáticos
+RUN python manage.py collectstatic --noinput
